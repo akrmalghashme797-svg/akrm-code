@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موسوعة الأكواد الكبرى - أكرم فون</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #151f32;
+            --accent-color: #38bdf8;
+            --hover-color: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: rgba(56, 189, 248, 0.12);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --success-color: #4ade80;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* شريط البحث */
+        .search-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* الكروت والشركات */
+        .brand-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .brand-header {
+            padding: 20px 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #151f32, #0b0f19);
+            transition: all 0.3s ease;
+        }
+
+        .brand-header:hover {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+
+        .brand-header .arrow {
+            transition: transform 0.3s ease;
+            color: var(--accent-color);
+        }
+
+        .brand-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background-color: rgba(11, 15, 25, 0.4);
+        }
+
+        .code-list {
+            padding: 10px 25px;
+        }
+
+        .code-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-row:last-child {
+            border-bottom: none;
+        }
+
+        .code-desc {
+            font-size: 1rem;
+            color: #cbd5e1;
+        }
+
+        .code-val-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-val {
+            color: var(--accent-color);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.15rem;
+            font-weight: bold;
+            direction: ltr;
+            background: var(--code-bg);
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .code-val:hover {
+            background: rgba(56, 189, 248, 0.3);
+            transform: scale(1.03);
+        }
+
+        .brand-header.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* رسالة التنبيه بالنسخ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success-color);
+            color: #000;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast">تم نسخ الكود بنجاح!</div>
+
+<div class="container">
+    <header>
+        <h1>موسوعة الأكواد الشاملة لأندرويد</h1>
+        <p>المرجع التقني الأكبر لفحص وصيانة جميع الهواتف لـ "أكرم فون"</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن كود أو ميزة معينة (مثال: فحص، بطارية، شبكة)..." onkeyup="searchCodes()">
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>سامسونج (Samsung)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة فحص الهاردوير والشاشة والألوان العامة</span><span class="code-val" onclick="copyCode(this)">*#0*#</span></div>
+                <div class="code-row"><span class="code-desc">حالة البطارية وتدفق الشحن وتهيئة قراءة الأمبير</span><span class="code-val" onclick="copyCode(this)">*#0228#</span></div>
+                <div class="code-row"><span class="code-desc">معرفة إصدار السوفتوير و الـ PDA والـ CSC بالكامل</span><span class="code-val" onclick="copyCode(this)">*#1234#</span></div>
+                <div class="code-row"><span class="code-desc">وضع الخدمة المتقدم لتغيير وفحص ترددات الشبكة (Service Mode)</span><span class="code-val" onclick="copyCode(this)">*#0011#</span></div>
+                <div class="code-row"><span class="code-desc">تحديث وإصلاح الفيرموير الداخلي لشاشة اللمس</span><span class="code-val" onclick="copyCode(this)">*#2663#</span></div>
+                <div class="code-row"><span class="code-desc">تفريغ ملفات الكاش المؤثرة على سرعة ومساحة النظام (SysDump)</span><span class="code-val" onclick="copyCode(this)">*#9900#</span></div>
+                <div class="code-row"><span class="code-desc">اختبار ومعاينة جودة الميكروفونات وسماعات السبيكر</span><span class="code-val" onclick="copyCode(this)">*#0283#</span></div>
+                <div class="code-row"><span class="code-desc">التحقق من حالة قفل الشبكة الإقليمي (Network Lock)</span><span class="code-val" onclick="copyCode(this)">*#7465625#</span></div>
+                <div class="code-row"><span class="code-desc">فحص مستشعر التقارب (Proximity) والضوء الخلفي</span><span class="code-val" onclick="copyCode(this)">*#0588#</span></div>
+                <div class="code-row"><span class="code-desc">عرض النسخة الدقيقة للقطع الإلكترونية والـ Hardware Version</span><span class="code-val" onclick="copyCode(this)">*#2222#</span></div>
+                <div class="code-row"><span class="code-desc">إعدادات التحكم في مودم الـ USB وربطه بالكمبيوتر</span><span class="code-val" onclick="copyCode(this)">*#7284#</span></div>
+                <div class="code-row"><span class="code-desc">مسح بيانات وإعادة ضبط مصنع شاملة وفورية (خطير)</span><span class="code-val" onclick="copyCode(this)">*2767*3855#</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>شاومي (Xiaomi / Redmi / Poco)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">واجهة فحص العتاد الشاملة واختبار جميع القطع (CIT)</span><span class="code-val" onclick="copyCode(this)">*#*#6484#*#*</span></div>
+                <div class="code-row"><span class="code-desc">معلومات الهاتف المتقدمة ومراقبة إشارات الـ 4G/5G</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">اختبار الكاميرات الرسمية وفحص بؤرة العدسات</span><span class="code-val" onclick="copyCode(this)">*#*#34971539#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عنوان الماك للواي فاي (Wi-Fi MAC Address)</span><span class="code-val" onclick="copyCode(this)">*#*#232338#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض تفاصيل إصدار نظام الـ الاندرويد والـ Build والـ Kernal</span><span class="code-val" onclick="copyCode(this)">*#*#44336#*#*</span></div>
+                <div class="code-row"><span class="code-desc">اختبار جودة وحساسية شاشة اللمس المباشر</span><span class="code-val" onclick="copyCode(this)">*#*#2664#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فحص كارت البلوتوث الداخلي وقوة التقاط الأجهزة</span><span class="code-val" onclick="copyCode(this)">*#*#232331#*#*</span></div>
+                <div class="code-row"><span class="code-desc">كود إنشاء نسخة احتياطية فورية للصور والملفات</span><span class="code-val" onclick="copyCode(this)">*#*#273282*255*663282#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فحص اهتزاز الهاتف ومحرك الهزاز (Vibration Test)</span><span class="code-val" onclick="copyCode(this)">*#*#0842#*#*</span></div>
+                <div class="code-row"><span class="code-desc">تعطيل نظام تسجيل إحصائيات المكالمات الصوتي التلقائي</span><span class="code-val" onclick="copyCode(this)">*#*#8351#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>هواوي (Huawei / Honor)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة المهندسين المخفية لفحص أجهزة ومكونات هواوي (Project Menu)</span><span class="code-val" onclick="copyCode(this)">*#*#2846579#*#*</span></div>
+                <div class="code-row"><span class="code-desc">معرفة حجم ونوع شريحة ذاكرة الرام العشوائية (RAM)</span><span class="code-val" onclick="copyCode(this)">*#*#3264#*#*</span></div>
+                <div class="code-row"><span class="code-desc">قائمة فحص الشبكة والإشارات المتطورة لأجهزة هواوي</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">اختبار مستشعرات الحركة والبوصلة الرقمية للخرائط</span><span class="code-val" onclick="copyCode(this)">*#*#1472365#*#*</span></div>
+                <div class="code-row"><span class="code-desc">إصدار السوفتوير والتعديلات البرمجية الخاصة بهواوي</span><span class="code-val" onclick="copyCode(this)">*#*#1234#*#*</span></div>
+                <div class="code-row"><span class="code-desc">اختبار استجابة أزرار الصوت والطاقة وجاذبية الشاشة</span><span class="code-val" onclick="copyCode(this)">*#*#0*#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فحص ومعاينة بطاقة الاتصال والـ SIM وسيريال الشريحة</span><span class="code-val" onclick="copyCode(this)">*#*#232337#*#</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>أوبو (Oppo)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة المصنع والهندسة لاختبار ومعايرة القطع (Engineer Mode)</span><span class="code-val" onclick="copyCode(this)">*#899#</span></div>
+                <div class="code-row"><span class="code-desc">عرض تفاصيل إصدار نظام تشغيل ColorOS ونوع الموديل الدقيق</span><span class="code-val" onclick="copyCode(this)">*#6776#</span></div>
+                <div class="code-row"><span class="code-desc">كود مخصص لعرض القيمة الدولية لمعدل الامتصاص الذري الاشعاعي</span><span class="code-val" onclick="copyCode(this)">*#07#</span></div>
+                <div class="code-row"><span class="code-desc">الدخول المباشر لإعدادات المطورين والتصحيح (Debugging)</span><span class="code-val" onclick="copyCode(this)">*#800#</span></div>
+                <div class="code-row"><span class="code-desc">اختبار تباين الشاشة ووضوح ألوان الـ RGB وسرعة الاستجابة</span><span class="code-val" onclick="copyCode(this)">*#807#</span></div>
+                <div class="code-row"><span class="code-desc">عرض الرقم التسلسلي والـ IMEI للهاتف للتحقق من أصالته</span><span class="code-val" onclick="copyCode(this)">*#06#</span></div>
+                <div class="code-row"><span class="code-desc">تهيئة شاملة لمستشعر البصمة وإعادة معايرته برمجياً</span><span class="code-val" onclick="copyCode(this)">*#*#3646633#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>ريلمي (Realme)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">فتح لوحة التحكم اليدوية بهاردوير وشاشة الجهاز</span><span class="code-val" onclick="copyCode(this)">*#899#</span></div>
+                <div class="code-row"><span class="code-desc">عرض إصدار السوفتوير وبنية نظام Realme UI الأساسية</span><span class="code-val" onclick="copyCode(this)">*#6776#</span></div>
+                <div class="code-row"><span class="code-desc">فحص مستشعرات الجيرسكوب والتسارع (Gyroscope Test)</span><span class="code-val" onclick="copyCode(this)">*#*#232339#*#*</span></div>
+                <div class="code-row"><span class="code-desc">كود فحص كفاءة الـ GPS وتتبع اتصالات الأقمار الصناعية</span><span class="code-val" onclick="copyCode(this)">*#*#1472365#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض بيانات الجدولة وملفات اللوغ (Log) الخاصة بنظام التشغيل</span><span class="code-val" onclick="copyCode(this)">*#*#225#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فتح لوحة تتبع الأخطاء البرمجية وإرسال التقارير البرمجية</span><span class="code-val" onclick="copyCode(this)">*#800#</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>إنفينيكس (Infinix)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة اختبار المصنع ومعايرة الشاشة والأزرار والكاميرا</span><span class="code-val" onclick="copyCode(this)">*#90#</span></div>
+                <div class="code-row"><span class="code-desc">قائمة فحص ترددات وسماعات الأذن وتعديل مستويات الصوت</span><span class="code-val" onclick="copyCode(this)">*#88#</span></div>
+                <div class="code-row"><span class="code-desc">اختبار آلي متكامل وتلقائي لمكونات اللوحة الأم والقطع</span><span class="code-val" onclick="copyCode(this)">*#87#</span></div>
+                <div class="code-row"><span class="code-desc">عرض البنية التحتية الأساسية وبناء نسخة أندرويد للهاتف</span><span class="code-val" onclick="copyCode(this)">*#*#1111#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض معلومات الهاردوير وبنية المعالج ونوع شريحة الـ CPU</span><span class="code-val" onclick="copyCode(this)">*#*#2222#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فتح لوحة مراقبة وإعدادات الشبكة المتقدمة وتثبيت الـ 4G</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>جوجل بكسل (Google Pixel)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة معلومات أجهزة جوجل ونظام أندرويد الخام للشبكات</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">تفعيل وضع تشخيص خدمات الاتصال التابع لمزودي الخدمة</span><span class="code-val" onclick="copyCode(this)">*#*#3282#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فتح شاشة تتبع بيانات الـ GPS والـ Global Positioning</span><span class="code-val" onclick="copyCode(this)">*#*#1575#*#*</span></div>
+                <div class="code-row"><span class="code-desc">مراقبة اتصال الواي فاي وسرعة نقل حزم البيانات المحلية</span><span class="code-val" onclick="copyCode(this)">*#*#232339#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض بيانات وتفاصيل تراخيص حقوق الملكية الفكرية للهاتف</span><span class="code-val" onclick="copyCode(this)">*#*#225#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>ون بلس (OnePlus)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">تطبيق التشخيص المخفي وفحص شحن وبطارية أجهزة ون بلس</span><span class="code-val" onclick="copyCode(this)">*#808#</span></div>
+                <div class="code-row"><span class="code-desc">لوحة تعقب وعرض تقارير أخطاء واجهة نظام OxygenOS</span><span class="code-val" onclick="copyCode(this)">*#800#</span></div>
+                <div class="code-row"><span class="code-desc">معرفة نوع الموديل الدقيق والـ Build Number الخاص بالجهاز</span><span class="code-val" onclick="copyCode(this)">*#1234#</span></div>
+                <div class="code-row"><span class="code-desc">كود فحص جودة الشاشة والبيكسلات الميتة (Dead Pixels)</span><span class="code-val" onclick="copyCode(this)">*#*#2664#*#*</span></div>
+                <div class="code-row"><span class="code-desc">الدخول المباشر لإعدادات وفحص دوائر الراديو والإشارة بالهاتف</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>سوني (Sony Xperia)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">قائمة خدمة سوني إكسبريا المتقدمة لاختبار كافة المكونات</span><span class="code-val" onclick="copyCode(this)">*#*#7378423#*#*</span></div>
+                <div class="code-row"><span class="code-desc">التحقق من حالة قفل الـ Bootloader وصلاحيات المطورين</span><span class="code-val" onclick="copyCode(this)">*#*#7378423#*#*</span></div>
+                <div class="code-row"><span class="code-desc">معلومات تفصيلية شاملة عن قوة إرسال شريحة الاتصال الخلوية</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">كود اختبار فحص الإضاءة التلقائية ومستشعر الإنارة المحيطة</span><span class="code-val" onclick="copyCode(this)">*#*#0842#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>إل جي (LG)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">القائمة المخفية العامة لفحص مكونات الهاردوير لأجهزة LG</span><span class="code-val" onclick="copyCode(this)">*#546368#*#*</span></div>
+                <div class="code-row"><span class="code-desc">كود قائمة الفحص البديل لأجهزة LG القديمة والحديثة للمهندسين</span><span class="code-val">3845#*#</span></div>
+                <div class="code-row"><span class="code-desc">اختبار وتهيئة لوحة اللمس الرقمية وشاشة العرض الحيوية</span><span class="code-val" onclick="copyCode(this)">*#*#2664#*#*</span></div>
+                <div class="code-row"><span class="code-desc">مراقبة جودة ونوع إشارات أبراج الاتصال المتصل بها الهاتف</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>إتش تي سي (HTC)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">برنامج أداة التشخيص وفحص العتاد الرسمي لهواتف HTC</span><span class="code-val" onclick="copyCode(this)">*#*#3424#*#*</span></div>
+                <div class="code-row"><span class="code-desc">مراقبة اختبار تقارير أداء نظام التشغيل والشبكة اللاسلكية</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">معاينة واختبار كفاءة الإضاءة الخلفية للوحة الأزرار السفلية</span><span class="code-val" onclick="copyCode(this)">*#*#1575#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض بيانات وعناوين بروتوكولات الاتصال والبلوتوث المحمية</span><span class="code-val" onclick="copyCode(this)">*#*#232331#*#*</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-card">
+        <div class="brand-header" onclick="toggleSection(this)">
+            <span>موتورولا (Motorola)</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="brand-content">
+            <div class="code-list">
+                <div class="code-row"><span class="code-desc">فتح قائمة التكوين المخفية لإعدادات قطع هواتف Motorola الذكية</span><span class="code-val" onclick="copyCode(this)">*#*#2486#*#*</span></div>
+                <div class="code-row"><span class="code-desc">فتح لوحة هندسة الإشارات وضبط حزم الترددات الخلوية والمودم</span><span class="code-val" onclick="copyCode(this)">*#*#4636#*#*</span></div>
+                <div class="code-row"><span class="code-desc">التحقق من صحة وقراءة كروت الذاكرة الخارجية والـ MicroSD</span><span class="code-val" onclick="copyCode(this)">*#*#273282*255*663282#*#*</span></div>
+                <div class="code-row"><span class="code-desc">عرض بيانات ومعلومات الخصوصية والـ IMEI التسلسلي الأصلي</span><span class="code-val" onclick="copyCode(this)">*#06#</span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // تفعيل وإغلاق الأقسام بسلاسة
+    function toggleSection(header) {
+        header.classList.toggle('active');
+        var content = header.nextElementSibling;
+        
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+
+    // وظيفة نسخ الكود بضغطة واحدة
+    function copyCode(element) {
+        var codeText = element.innerText;
+        navigator.clipboard.writeText(codeText).then(function() {
+            var toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(function() {
+                toast.style.display = 'none';
+            }, 2000);
+        });
+    }
+
+    // محرك البحث البرمجي لتصفية الأكواد
+    function searchCodes() {
+        var input = document.getElementById('searchInput').value.toLowerCase();
+        var rows = document.getElementsByClassName('code-row');
+        var cards = document.getElementsByClassName('brand-card');
+
+        // البحث داخل صفوف الأكواد
+        for (var i = 0; i < rows.length; i++) {
+            var desc = rows[i].getElementsByClassName('code-desc')[0].innerText.toLowerCase();
+            var val = rows[i].getElementsByClassName('code-val')[0].innerText.toLowerCase();
+            
+            if (desc.includes(input) || val.includes(input)) {
+                rows[i].style.display = "flex";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+
+        // إظهار أو إخفاء كارت الشركة بالكامل بناء على نتائج البحث
+        for (var j = 0; j < cards.length; j++) {
+            var visibleRows = cards[j].querySelectorAll('.code-row[style="display: flex;"]');
+            var content = cards[j].querySelector('.brand-content');
+            var header = cards[j].querySelector('.brand-header');
+            
+            if (input === "") {
+                cards[j].style.display = "block";
+                content.style.maxHeight = null;
+                header.classList.remove('active');
+            } else if (visibleRows.length > 0 || cards[j].innerText.toLowerCase().includes(input)) {
+                cards[j].style.display = "block";
+                content.style.maxHeight = content.scrollHeight + "px";
+                header.classList.add('active');
+            } else {
+                cards[j].style.display = "none";
+            }
+        }
+    }
+</script>
+</body>
+</html>
